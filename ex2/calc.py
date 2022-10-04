@@ -50,9 +50,10 @@ btn_eq = tk.Button(root, text="=", font=("", 30), width=4, height=2)#=のボタ�
 btn_eq.bind("<1>", click_equal)
 btn_eq.grid(row=4, column=2)
 
-btn_dl = tk.Button(root, text="☜×", font=("", 30), width=4, height=1)#deleteのボタンの生成
+btn_dl = tk.Button(root, text="☜×", font=("", 30), width=4, height=1, bg="black", fg="white")#deleteのボタンの生成
 btn_dl.bind("<1>", click_del)
 btn_dl.grid(row=0, column=3)
+
 
 
         
