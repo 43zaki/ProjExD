@@ -15,14 +15,17 @@ def click_equal(event):
     entry.delete(0, tk.END)
     entry.insert(tk.END, res)
     
-    
-
+def click_del(event):
+    dln = entry.get()
+    dln = dln[0:-1]
+    entry.delete(0, tk.END)
+    entry.insert(tk.END, dln)
 
 root = tk.Tk()
 root.geometry("400x500")
 
 entry = tk.Entry(root, width=10, font=(", 40"), justify="right") # 練習4
-entry.grid(row=0, column=0, columnspan=4)
+entry.grid(row=0, column=0, columnspan=3)
 
 
 r, c = 1, 0
@@ -41,11 +44,15 @@ operators = ["×", "÷", "-", "+"]
 for i, ope in enumerate(operators, 1):
     btn = tk.Button(root, text=f"{ope}", font=("", 30), width=4, height=2)
     btn.bind("<1>", click_number)
-    btn.grid(row=i, column=4)
+    btn.grid(row=i, column=3)
 
 btn_eq = tk.Button(root, text="=", font=("", 30), width=4, height=2)
 btn_eq.bind("<1>", click_equal)
 btn_eq.grid(row=4, column=2)
+
+btn_dl = tk.Button(root, text="☜×", font=("", 30), width=4, height=1)
+btn_dl.bind("<1>", click_del)
+btn_dl.grid(row=0, column=3)
 
 
         
