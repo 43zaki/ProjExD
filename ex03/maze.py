@@ -80,7 +80,6 @@ def enemy_move(): #enemyを動かす関数
         ex = x
         ey = y
     
-    
 
 if __name__ == "__main__":
     root = tk.Tk()
