@@ -12,15 +12,22 @@ def key_up(event):
     key = ""
     
 def main_proc():    
-    global cx, cy, key, canvas
+    global cx, cy, canvas, mx, my
     if key == "Up":
-        cy -= 20
+        #cy -= 20
+        my -= 1
     elif key == "Down":
-        cy += 20
+        #cy += 20
+        my += 1
     elif key == "Left":
-        cx -= 20
+        #cx -= 20
+        mx -= 1
     elif key == "Right":
-        cx += 20
+        #cx += 20
+        mx += 1
+        
+    cx = mx*100 + 50
+    cy = my*100 + 50
         
     canvas.coords(bird, cx, cy)
     
@@ -41,6 +48,7 @@ if __name__ == "__main__":
     
     tori = tk.PhotoImage(file="pra03/fig/9.png")
     cx, cy = 300, 400
+    mx, my = 1, 1
     bird = canvas.create_image(cx, cy, image=tori, tags="tori")
     
     key = ""
