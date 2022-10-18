@@ -8,4 +8,8 @@ if __name__ == "__main__":
     canvas = tk.Canvas(root, width=1500, height=900, bg="black")
     canvas.place(x=0, y=0)
     
+    tori = tk.PhotoImage(file="pra03/fig/9.png")
+    cx, cy = 300, 400
+    canvas.create_image(cx, cy, image=tori, tags="tori")
+    
     root.mainloop()
