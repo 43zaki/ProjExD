@@ -3,7 +3,6 @@ import tkinter.messagebox as tkm
 import maze_maker
 import random
 from PIL import Image, ImageTk #png画像を表示させるため
-
 def key_down(event):
     global key
     key = event.keysym
@@ -17,16 +16,12 @@ def main_proc():
     global cx, cy, canvas, mx, my, key, ex, ey
     enemy_move()#enemyを動かす
     if key == "Up" and maze_source[my-1][mx] != 1:
-        #cy -= 20
         my -= 1
     elif key == "Down" and maze_source[my+1][mx] != 1:
-        #cy += 20
         my += 1
     elif key == "Left" and maze_source[my][mx-1] != 1:
-        #cx -= 20
         mx -= 1
     elif key == "Right" and maze_source[my][mx+1] != 1:
-        #cx += 20
         mx += 1
         
     cx = mx*100 + 50
@@ -70,17 +65,17 @@ def enemy_move(): #enemyを動かす関数
         ecx = ex*100+50
         ecy = ey*100+50
         canvas.coords(enemy, ecx, ecy)
-        if ms == 3:
-            maze_source[y][x] = 3
+        if ms == 3: #元の場所がゴールであったら
+            maze_source[y][x] = 3 #ゴールの場所のままにする
         else:
-            maze_source[y][x] = 0
+            maze_source[y][x] = 0#自分がいた位置を道にする。
         maze_source[ey][ex] = 4
     elif maze_source[ey][ex] == 3:
         ecx = ex*100+50
         ecy = ey*100+50
         canvas.coords(enemy, ecx, ecy)
         maze_source[y][x] = 0
-        maze_source[ey][ex] = 3
+        maze_source[ey][ex] = 3#自分のいる位置はゴールとする。
     else:
         ex = x
         ey = y
@@ -97,6 +92,7 @@ if __name__ == "__main__":
     
     img = ImageTk.PhotoImage(file="pra03/fig/edit10.png")
     maze_source = maze_maker.make_maze(15, 9)
+    #maze_sourceの中身は、0が道、1が壁、2がスタート、3がゴール、4がenemyの位置となっている.
     maze_maker.show_maze(canvas, maze_source)
     for y, maze in enumerate(maze_source): #壁の画像を変更
         for x, _ in enumerate(maze):
