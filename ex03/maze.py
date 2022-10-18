@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.messagebox as tkm
 import maze_maker
 import random
+from PIL import Image, ImageTk #png画像を表示させるため
 
 def key_down(event):
     global key
@@ -94,8 +95,13 @@ if __name__ == "__main__":
     canvas = tk.Canvas(root, width=1500, height=900, bg="black")
     canvas.place(x=0, y=0)
     
+    img = ImageTk.PhotoImage(file="pra03/fig/edit10.png")
     maze_source = maze_maker.make_maze(15, 9)
     maze_maker.show_maze(canvas, maze_source)
+    for y, maze in enumerate(maze_source): #壁の画像を変更
+        for x, _ in enumerate(maze):
+            if maze_source[y][x] == 1:
+                canvas.create_image(x*100+50, y*100+50, image=img)
     
     tori = tk.PhotoImage(file="ex03/fig/9.png")
     cx, cy = 300, 400
