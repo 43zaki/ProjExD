@@ -13,16 +13,16 @@ def key_up(event):
     
 def main_proc():    
     global cx, cy, canvas, mx, my
-    if key == "Up":
+    if key == "Up" and maze_source[my-1][mx] == 0:
         #cy -= 20
         my -= 1
-    elif key == "Down":
+    elif key == "Down" and maze_source[my+1][mx] == 0:
         #cy += 20
         my += 1
-    elif key == "Left":
+    elif key == "Left" and maze_source[my][mx-1] == 0:
         #cx -= 20
         mx -= 1
-    elif key == "Right":
+    elif key == "Right" and maze_source[my][mx+1] == 0:
         #cx += 20
         mx += 1
         
