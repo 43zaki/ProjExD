@@ -54,6 +54,7 @@ def main():
         if vy-10 <= 0 or vy+10 >= 900:
             move_y *= -1
         
+        if tori_rct.colliderect(bomb_rct):loop = False
         for event in pg.event.get():
             if event.type == pg.QUIT:loop = False
             
