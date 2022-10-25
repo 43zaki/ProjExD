@@ -49,6 +49,11 @@ def main():
         vx += move_x
         vy += move_y
         
+        if vx-10 <= 0 or vx+10 >= 1600:
+            move_x *= -1
+        if vy-10 <= 0 or vy+10 >= 900:
+            move_y *= -1
+        
         for event in pg.event.get():
             if event.type == pg.QUIT:loop = False
             
