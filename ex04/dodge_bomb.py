@@ -8,7 +8,7 @@ def main():
     pg.display.set_caption("逃げろ!こうかとん")
     scrn_sfc = pg.display.set_mode((1600,900))
     bgimg = pg.image.load("ex04/fig/pg_bg.jpg")
-    loop = True
+    loop = True #実行し続けるかどうかを判定する
     tori_x = 900
     tori_y = 400
     move_x, move_y = 1, 1
@@ -33,7 +33,7 @@ def main():
         tori_sfc = pg.image.load("ex04/fig/9.png")
         tori_sfc = pg.transform.rotozoom(tori_sfc, 0, 2)
         tori_sfc.set_alpha((transmittance))
-        tori_rct =    tori_sfc.get_rect()
+        tori_rct = tori_sfc.get_rect()
         tori_rct.center = tori_x, tori_y
         scrn_sfc.blit(tori_sfc, tori_rct)
         
@@ -79,7 +79,7 @@ def main():
             #爆発の描写
             bomb1_sfc = pg.image.load("ex04/fig/bomb1.png")
             bomb1_sfc = pg.transform.rotozoom(bomb1_sfc, 0, 0.5)
-            bomb1_rct =    bomb1_sfc.get_rect()
+            bomb1_rct = bomb1_sfc.get_rect()
             bomb1_rct.center = tori_x, tori_y
             scrn_sfc.blit(bomb1_sfc, bomb1_rct)
             pg.display.update()
@@ -112,7 +112,6 @@ def main():
                 
     pg.quit()
     sys.exit()
-    
     
     
 if __name__ == "__main__":
