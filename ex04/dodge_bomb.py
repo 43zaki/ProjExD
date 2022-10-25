@@ -13,12 +13,11 @@ def main():
     tori_y = 400
     move_x, move_y = 1, 1
     x, y = 0, 0
-    vx = random.randint(10, 800-10)
+    vx = random.randint(10, 800-10) #vxとvyは爆弾の初期位置
     vy = random.randint(10, 900-10)
     transmittance = 255 #透過率を表す
-    cookie_rct = 0
-    
-    pg.time.set_timer(30, 8000)
+    cookie_j = 0 #クッキーがあるかないか特定
+    pg.time.set_timer(30, 8000) #8秒経ったらクッキーを生成する
     
     
     
@@ -30,6 +29,7 @@ def main():
         
         scrn_sfc.blit(bgimg, (0,0))
         
+        #こうかとん生成
         tori_sfc = pg.image.load("ex04/fig/9.png")
         tori_sfc = pg.transform.rotozoom(tori_sfc, 0, 2)
         tori_sfc.set_alpha((transmittance))
@@ -50,7 +50,8 @@ def main():
         elif pressed_keys[pg.K_RIGHT] and tori_rct.right+1 < 1600:
             x = tori_x
             tori_x += 10
-            
+        
+        #爆弾の生成
         bomb_sfc = pg.Surface((20, 20))
         bomb_sfc.set_colorkey((0, 0, 0))
         pg.draw.circle(bomb_sfc, (255, 0, 0), (10, 10), 10) 
@@ -60,6 +61,7 @@ def main():
         vx += move_x
         vy += move_y
         
+        #画面の右に出たらプログラム終了、それ以外で淵に当たったら跳ね返る
         if vx+10 >= 1600:
             loop = False
         if vx-10 <= 0 :
@@ -67,7 +69,7 @@ def main():
         if vy-10 <= 0 or vy+10 >= 900:
             move_y *= -1
             
-        if cookie_rct != 0:
+        if cookie_j == 1: #クッキーが描画されているとき
             scrn_sfc.blit(cookie_sfc, cookie_rct)
             if tori_rct.colliderect(cookie_rct): #クッキーとこうかとんがかさなったら
                 transmittance += 50
@@ -80,9 +82,6 @@ def main():
             bomb1_rct =    bomb1_sfc.get_rect()
             bomb1_rct.center = tori_x, tori_y
             scrn_sfc.blit(bomb1_sfc, bomb1_rct)
-            
-            #cookie_sfc = 0
-            
             pg.display.update()
             
             #爆弾に当たったら200右に移動し爆弾の速度を上げる
@@ -101,7 +100,8 @@ def main():
             
         for event in pg.event.get():
             if event.type == pg.QUIT:loop = False
-            if event.type == 30:
+            if event.type == 30: #クッキーの生成
+                cookie_j = 1 
                 cx = random.randint(800, 1600)
                 cy = random.randint(0, 900)
                 cookie_sfc = pg.image.load("ex04/fig/cookie.png")
@@ -110,7 +110,6 @@ def main():
                 cookie_rct.center = cx, cy 
                 scrn_sfc.blit(cookie_sfc, cookie_rct)
                 
-            
     pg.quit()
     sys.exit()
     
