@@ -91,7 +91,7 @@ def main():
                 move_x *= -1
             
             #透過率を上げる
-            transmittance -= 40
+            transmittance -= 50
             if transmittance < 15:
                 loop=False
                 
