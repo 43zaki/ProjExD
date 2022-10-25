@@ -10,6 +10,10 @@ def main():
     loop = True
     tori_x = 900
     tori_y = 400
+    move_x, move_y = 1, 1
+    x, y = 0, 0
+    vx = random.randint(10, 1600-10)
+    vy = random.randint(10, 900-10)
     
     
     
@@ -35,6 +39,15 @@ def main():
             tori_x -= 1
         elif pressed_keys[pg.K_RIGHT] and tori_rct.right+1 < 1600:
             tori_x += 1
+            
+        bomb_sfc = pg.Surface((20, 20))
+        bomb_sfc.set_colorkey((0, 0, 0))
+        pg.draw.circle(bomb_sfc, (255, 0, 0), (10, 10), 10) 
+        bomb_rct = bomb_sfc.get_rect()
+        bomb_rct.center = vx, vy
+        scrn_sfc.blit(bomb_sfc, bomb_rct)   
+        vx += move_x
+        vy += move_y
         
         for event in pg.event.get():
             if event.type == pg.QUIT:loop = False
