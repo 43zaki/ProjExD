@@ -73,7 +73,7 @@ def main():
             scrn_sfc.blit(cookie_sfc, cookie_rct)
             if tori_rct.colliderect(cookie_rct): #クッキーとこうかとんがかさなったら
                 transmittance += 50
-                cookie_rct = 0
+                cookie_j = 0
         
         if tori_rct.colliderect(bomb_rct): #爆弾がこうかとんとかさなったら
             #爆発の描写
