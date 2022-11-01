@@ -1,10 +1,9 @@
-from multiprocessing import Event
 import pygame as pg
 import sys
 from random import randint, choice
 from pygame.locals import *
 
-class Screen(pg.sprite.Sprite):
+class Screen(pg.sprite.Sprite): #スクリーンと背景を生成するクラス　　 
     def __init__(self, title, wh_pos:tuple, file_path):
         pg.sprite.Sprite.__init__(self)
         pg.display.set_caption(title)
@@ -54,7 +53,7 @@ class Bird(pg.sprite.Sprite): #こうかとんを生成するクラス
                 
     
          
-                
+               
 class Bomb(pg.sprite.Sprite): # 爆弾を生成するクラス
     def __init__(self, color:tuple, radius, speed:tuple):
         pg.sprite.Sprite.__init__(self)
@@ -78,7 +77,7 @@ class Bomb(pg.sprite.Sprite): # 爆弾を生成するクラス
         self.rect.move_ip(self.vx, self.vy) 
         scrn.blit(self.image, self.rect)
         
-class Sword(pg.sprite.Sprite):
+class Sword(pg.sprite.Sprite):#剣を生成するクラス
     key_delta = {
         pg.K_UP:    [0, -1],
         pg.K_DOWN:  [0, +1],
@@ -93,14 +92,14 @@ class Sword(pg.sprite.Sprite):
         self.image = pg.transform.flip(self.image, 1, 0)
         self.rect = self.image.get_rect()
         self.rect.center = first_pos
-        self.judge = 1
+        self.judge = 1 #こうかとんがどちらの向きに向いているかジャッジする。右だと1左だと－1
     
     def update(self, scrn):
         key_states = pg.key.get_pressed()
         rct = scrn.get_rect()
         for key, delta in self.key_delta.items():
             if key_states[key]:
-                if key_states[pg.K_LEFT] and self.judge == -1:
+                if key_states[pg.K_LEFT] and self.judge == -1: #こうかとんが右を向いているときに
                     self.image = pg.transform.flip(self.image, 1, 0)
                     self.judge = 1
                     self.rect.move_ip(-160, 0)
@@ -161,7 +160,7 @@ def main():
     sword = Sword("pra05/fig/sword.png", 0.15, (820, 350))
     # hp = HP(900, 400, 100, 100)
     bomb_lst = []
-    for _ in range(5):
+    for _ in range(5): #爆弾を5回生成
         x = choice([+1, -1])
         y = choice([+1, -1])
         bomb = Bomb((255, 0, 0), 10, (x, y))
@@ -171,7 +170,7 @@ def main():
     bomb_grp = pg.sprite.Group(*bomb_lst)
     sword_grp = pg.sprite.Group(sword)
     groop = pg.sprite.Group(bird, *bomb_lst, sword)
-    pg.time.set_timer(30, 8000)
+    pg.time.set_timer(30, 8000) #8秒ごとに爆弾を生成
     
     clock = pg.time.Clock() 
     while True:
@@ -189,7 +188,7 @@ def main():
                 sword.image = pg.transform.rotate(sword.image, 90*sword.judge)
                 if pg.sprite.groupcollide(sword_grp, bomb_grp, dokilla=False, dokillb=True):
                     pass
-            if event.type == pg.KEYUP and event .key == pg.K_SPACE:
+            if event.type == pg.KEYUP and event.key == pg.K_SPACE:
                 sword.rect.move_ip(0, -90)
                 sword.image = pg.transform.rotate(sword.image, -90*sword.judge)
                 if pg.sprite.groupcollide(sword_grp, bomb_grp, dokilla=False, dokillb=True):
