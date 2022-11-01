@@ -1,7 +1,6 @@
 import pygame as pg
 import sys
 from random import randint, choice
-from pygame.locals import *
 
 class Screen(pg.sprite.Sprite): #スクリーンと背景を生成するクラス　　 
     def __init__(self, title, wh_pos:tuple, file_path):
@@ -51,8 +50,6 @@ class Bird(pg.sprite.Sprite): #こうかとんを生成するクラス
                     self.rect.move_ip(-1*delta[0], -1*delta[1])
                 scrn.blit(self.image, self.rect)
                 
-    
-         
                
 class Bomb(pg.sprite.Sprite): # 爆弾を生成するクラス
     def __init__(self, color:tuple, radius, speed:tuple):
@@ -76,8 +73,9 @@ class Bomb(pg.sprite.Sprite): # 爆弾を生成するクラス
         self.vy *= tate
         self.rect.move_ip(self.vx, self.vy) 
         scrn.blit(self.image, self.rect)
-        
-class Sword(pg.sprite.Sprite):#剣を生成するクラス
+          
+          
+class Sword(pg.sprite.Sprite): # 剣を生成するクラス
     key_delta = {
         pg.K_UP:    [0, -1],
         pg.K_DOWN:  [0, +1],
@@ -136,10 +134,6 @@ class Sword(pg.sprite.Sprite):#剣を生成するクラス
 #         scrn.blit(self.label, (self.x, self.y))
         
         
-                
-                
-        
-
 def check_bound(obj_rct, scr_rct):
     """
     obj_rct：こうかとんrct，または，爆弾rct
