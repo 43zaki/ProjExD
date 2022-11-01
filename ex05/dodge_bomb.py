@@ -199,6 +199,7 @@ def main():
             if event.type == 30:
                 bomb = Bomb((255, 0, 0), 10, (x, y))
                 groop.add(bomb)
+                bomb_grp.add(bomb)
                 
         
         pg.display.update() 
