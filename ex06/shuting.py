@@ -51,7 +51,7 @@ class Prayer(pg.sprite.Sprite): #prayerが動かす挙動を設定するクラ�
                     self.rect.move_ip(-1*delta[0], -1*delta[1])
                 
                 
-class Shot(pg.sprite.Sprite):
+class Shot(pg.sprite.Sprite): #球に関するクラス
     def __init__(self, color:tuple, radius, speed:tuple, pos:tuple):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((2*radius, 2*radius)) # 空のSurface
@@ -67,7 +67,7 @@ class Shot(pg.sprite.Sprite):
         self.rect.move_ip(self.vx, self.vy)
         
 
-class Enemy(pg.sprite.Sprite):
+class Enemy(pg.sprite.Sprite): #enemyに関するクラス
     def __init__(self, file_path1, size, first_pos:tuple, speed:tuple):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.image.load(file_path1)
@@ -110,8 +110,8 @@ def main():
     enemy_grp = pg.sprite.Group(enemy) #enemyに関するグループを作成する
     group = pg.sprite.Group(player, enemy) #全ての
     
-    pg.time.set_timer(30, 1500) #1秒ごとに敵が生成される
-    pg.time.set_timer(31, 1000)
+    pg.time.set_timer(30, 1500) #1.5秒ごとに敵が生成される
+    pg.time.set_timer(31, 1000) #1秒ごとに敵の球が生成される
     
     clock = pg.time.Clock()
     
