@@ -1,6 +1,8 @@
-import pygame as pg
 import sys
-from random import randint, choice
+from random import choice, randint
+
+import pygame as pg
+
 
 class Screen: #スクリーンと背景を生成するクラス　　 
     def __init__(self, title, wh_pos:tuple, file_path):
