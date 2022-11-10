@@ -142,9 +142,10 @@ def main():
         group.update(scrn.sfc)
         group.draw(scrn.sfc)
         
-        if pg.sprite.spritecollide(player, enemy_grp1, dokill=1): 
-            return
+    
         for enemy_grp, add_score in enemy_grp_dct.items():
+            if pg.sprite.spritecollide(player, enemy_grp , dokill=False): 
+                return
             if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=True, dokillb=True):
                 score.update(add_score=add_score) 
         
