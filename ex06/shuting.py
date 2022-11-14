@@ -28,6 +28,7 @@ class Screen: #スクリーンと背景を生成するクラス　　
         if abs(self.scroll) > 900:
             self.scroll = 0
             
+            
 class Prayer(pg.sprite.Sprite): #prayerが動かす挙動を設定するクラス
     key_delta = {
         pg.K_UP:    [0, -2],
@@ -87,7 +88,22 @@ class Enemy(pg.sprite.Sprite): #enemyに関するクラス
         self.vx *= yoko
         self.rect.move_ip(self.vx, self.vy)
         
-
+        
+class Score(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.font = pg.font.Font(None, 50)
+        self.font.set_italic(1)
+        self.color = "white"
+        self.score = 0
+        self.update()
+        self.rect = self.image.get_rect().move(10, 10)
+        
+    def update(self, scrn=None, add_score=0):
+        self.score += add_score  
+        msg = "Score: %d" % self.score
+        self.image = self.font.render(msg, 0, self.color) 
+        
 def check_bound(obj_rct, scr_rct):
     """
     obj_rct：こうかとんrct，または，爆弾rct
@@ -100,33 +116,40 @@ def check_bound(obj_rct, scr_rct):
     if obj_rct.top < scr_rct.top or scr_rct.bottom < obj_rct.bottom: 
         tate = -1
     return yoko, tate
-        
-
-        
+           
 def main():
     scrn = Screen("進撃のこうかとん", (1600, 900), "ex06/data/bg.jpg")
     player = Prayer("ex06/data/sentou.png", 0.3, (800, 830))
-    enemy = Enemy("pra05/fig/6.png", 1.5, (100, 70), (5 , 1))
+    enemy = Enemy("ex06/data/6.png", 1.5, (100, 70), (5 , 1))
+    score = Score()
+    
+    enemy_grp_dct = {} #enemyのグループの辞書を作成
     
     player_grp = pg.sprite.Group(player) #playerに関するグループを作成する
-    enemy_grp = pg.sprite.Group(enemy) #enemyに関するグループを作成する
-    group = pg.sprite.Group(player, enemy) #全ての
+    enemy_grp1 = pg.sprite.Group(enemy) #enemyに関するグループを作成する
+    enemy_grp2 = pg.sprite.Group() #enemyの球に関するグループを作成する
+    group = pg.sprite.Group(player, enemy, score) #全ての動きにに関するグループを作成する
+    
+    #enemyのグループに対するスコア
+    enemy_grp_dct[enemy_grp1] = 100
+    enemy_grp_dct[enemy_grp2] = 500
     
     pg.time.set_timer(30, 1500) #1.5秒ごとに敵が生成される
     pg.time.set_timer(31, 1000) #1秒ごとに敵の球が生成される
     
     clock = pg.time.Clock()
     
-    
     while True:
         scrn.update()
         group.update(scrn.sfc)
         group.draw(scrn.sfc)
         
-        if pg.sprite.spritecollide(player, enemy_grp, dokill=1):
-            return
-        if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=True, dokillb=True):
-            pass
+    
+        for enemy_grp, add_score in enemy_grp_dct.items():
+            if pg.sprite.spritecollide(player, enemy_grp , dokill=False): 
+                return
+            if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=True, dokillb=True):
+                score.update(add_score=add_score) 
         
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -141,16 +164,17 @@ def main():
             if event.type == 30:
                 # 1.5秒経ったときenemyを生成する。
                 enemyx = randint(100, 1500)
-                enemy = Enemy("pra05/fig/6.png", 1.5, (enemyx, 70), (5 , 1))
+                spdx = randint(-5, 5)
+                enemy = Enemy("ex06/data/6.png", 1.5, (enemyx, 70), (spdx, 1))
                 group.add(enemy)
-                enemy_grp.add(enemy)
+                enemy_grp1.add(enemy)
             if event.type == 31:
                 # 1.0秒経ったときenemyから球を生成する。
                 x = enemy.rect.centerx
                 y = enemy.rect.centery
                 shot = Shot((0, 255, 0), 10, (0, 3), (x, y))
                 group.add(shot)
-                enemy_grp.add(shot)
+                enemy_grp2.add(shot)
                  
         pg.display.update() 
         clock.tick(200)
