@@ -88,6 +88,32 @@ class Enemy(pg.sprite.Sprite): #enemyに関するクラス
         self.vx *= yoko
         self.rect.move_ip(self.vx, self.vy)
         
+
+class Item(pg.sprite.Sprite): #山崎
+    def __init__(self, file_path1, size, first_pos:tuple, speed:tuple):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load(file_path1)
+        self.image = pg.transform.rotozoom(self.image, 0, size)
+        self.rect = self.image.get_rect()
+        self.rect.center = first_pos
+        self.vx = speed[0]
+        self.vy = speed[1]
+        
+    def update(self,scrn):
+        self.rect.move_ip(self.vx, self.vy)
+        
+        
+class Thunder(pg.sprite.Sprite):#山崎
+    def __init__(self, file_path1, size, first_pos:tuple):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load(file_path1)
+        self.image = pg.transform.rotozoom(self.image, 0, size)
+        self.rect = self.image.get_rect()
+        self.rect.center = first_pos
+        
+    def update(self, scrn=None, vx=0, vy=0):
+        self.rect.move_ip(vx, vy)
+        
         
 class Score(pg.sprite.Sprite):
     def __init__(self):
@@ -118,28 +144,34 @@ def check_bound(obj_rct, scr_rct):
     return yoko, tate
            
 def main():
+    start = 0 # 無敵時間のスタートの初期値
+    item_time = 0 # 無敵時間の初期値 エラーを起こさないため
+    balet = 50 # playerが撃てる球の数
+    
     scrn = Screen("進撃のこうかとん", (1600, 900), "ex06/data/bg.jpg")
     player = Prayer("ex06/data/sentou.png", 0.3, (800, 830))
-<<<<<<< HEAD
     enemy = Enemy("ex06/data/6.png", 1.5, (100, 70), (5 , 1))
-=======
-    enemy = Enemy("pra05/fig/6.png", 1.5, (100, 70), (5 , 1))
->>>>>>> c871df2f8417ef132cc82d8312cb2fa53b4fa935
     score = Score()
+    thunder = None # エラーを起こさないため
     
     enemy_grp_dct = {} #enemyのグループの辞書を作成
     
     player_grp = pg.sprite.Group(player) #playerに関するグループを作成する
     enemy_grp1 = pg.sprite.Group(enemy) #enemyに関するグループを作成する
     enemy_grp2 = pg.sprite.Group() #enemyの球に関するグループを作成する
+    enemy_grp3 = pg.sprite.Group() #boss_enemyに関するグループを作成する
+    item_grp = pg.sprite.Group() #itemに関するグループを作成する
     group = pg.sprite.Group(player, enemy, score) #全ての動きにに関するグループを作成する
     
     #enemyのグループに対するスコア
-    enemy_grp_dct[enemy_grp1] = 100
-    enemy_grp_dct[enemy_grp2] = 500
+    enemy_grp_dct[enemy_grp1] = 300 # 通常の敵
+    enemy_grp_dct[enemy_grp2] = 100 # 敵の球
+    enemy_grp_dct[enemy_grp3] = 1000 #ボス
     
     pg.time.set_timer(30, 1500) #1.5秒ごとに敵が生成される
     pg.time.set_timer(31, 1000) #1秒ごとに敵の球が生成される
+    pg.time.set_timer(32, 10000) #10秒ごとにアイテムが生成される
+    pg.time.set_timer(33, 15000) #15秒ごとにボスが生成される
     
     clock = pg.time.Clock()
     
@@ -148,32 +180,65 @@ def main():
         group.update(scrn.sfc)
         group.draw(scrn.sfc)
         
-    
-        for enemy_grp, add_score in enemy_grp_dct.items():
-            if pg.sprite.spritecollide(player, enemy_grp , dokill=False): 
+        if pg.sprite.spritecollide(player, item_grp , dokill=True):
+            # playerがアイテムと接触したとき、
+            # playerの周りで雷が発生し無敵になる
+            start = pg.time.get_ticks()
+            item_time = 3000 # 無敵になる時間
+            x = player.rect.centerx # 雷の画像のx座標
+            y = player.rect.centery # 雷の画像のy座標
+            prcx = player.rect.centerx # playerと一緒に画像を更新するためにplayerの位置を保存
+            prcy = player.rect.centery # playerと一緒に画像を更新するためにplayerの位置を保存
+            thunder = Thunder("ex06/data/thunder.png", 1, (x, y))
+            group.add(thunder)
+            player_grp.add(thunder)
+            
+        for enemy_grp, add_score in enemy_grp_dct.items(): # enemy_grp: enemyのグループ名, add_score: enemyのスコア
+            finish = pg.time.get_ticks()
+            going = True # playerとenemyのグループが衝突したときにplayerのグループが消えるかを判定する。True:消える, False:消えない
+            if finish-start < item_time:
+                # 無敵時間内の雷の座標の更新
+                thunder_x = player.rect.centerx-prcx
+                thunder_y = player.rect.centery-prcy
+                prcx = player.rect.centerx
+                prcy = player.rect.centery
+                thunder.update(vx=thunder_x, vy=thunder_y)
+                going = False
+            elif group.has(thunder):
+                #無敵状態でないときに、雷がグループ内にあるとき雷をグループから削除する
+                group.remove(thunder)
+                player_grp.remove(thunder)
+            elif pg.sprite.spritecollide(player, enemy_grp , dokill=False): 
+                # playerとenemyが衝突したら終了
                 return
-            if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=True, dokillb=True):
+            if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=going, dokillb=True):
+                # playerの球と敵が衝突したときにスコアを更新する
                 score.update(add_score=add_score) 
+                
+                
         
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                # スペースが押されたときにこうかとんから球が発射される
+                before = pg.time.get_ticks()
+            if event.type == pg.KEYUP and event.key == pg.K_SPACE and balet > 0:
+                # スペースが話されたときにこうかとんから球が発射される
+                after = pg.time.get_ticks()
+                charge = 10 + (after - before)//40 #球の大きさを決める
+                if charge > 100: # 球の半径が100よりも大きかったら100にし貫通するようになる
+                    charge = 100
                 x = player.rect.centerx
                 y = player.rect.centery
-                shot = Shot((255, 0, 0), 13, (0, -4), (x, y))
+                shot = Shot((255, 0, 0), charge, (0, -4), (x, y))
                 group.add(shot)
                 player_grp.add(shot)
+                balet -= 1 # 弾数を減らす
             if event.type == 30:
                 # 1.5秒経ったときenemyを生成する。
                 enemyx = randint(100, 1500)
                 spdx = randint(-5, 5)
-<<<<<<< HEAD
                 enemy = Enemy("ex06/data/6.png", 1.5, (enemyx, 70), (spdx, 1))
-=======
-                enemy = Enemy("pra05/fig/6.png", 1.5, (enemyx, 70), (spdx, 1))
->>>>>>> c871df2f8417ef132cc82d8312cb2fa53b4fa935
                 group.add(enemy)
                 enemy_grp1.add(enemy)
             if event.type == 31:
@@ -183,6 +248,19 @@ def main():
                 shot = Shot((0, 255, 0), 10, (0, 3), (x, y))
                 group.add(shot)
                 enemy_grp2.add(shot)
+            if event.type == 32:
+                #10.0秒経ったときitemを生成する
+                x = randint(10, 1590)
+                y = 10
+                item = Item("ex06/data/thunder01.png", 0.1, (x, y), (0, 1))
+                group.add(item)
+                item_grp.add(item)
+            if event.type == 33:
+                # 20.0秒ごとにboss_enemyを生成する。
+                enemyx = randint(100, 1500)
+                boss_enemy = Enemy("ex06/data/6.png", 0.5, (enemyx, 70), (10, 0))
+                group.add(boss_enemy)
+                enemy_grp3.add(boss_enemy)
                  
         pg.display.update() 
         clock.tick(200)
