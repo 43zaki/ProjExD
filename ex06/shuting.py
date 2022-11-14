@@ -120,7 +120,11 @@ def check_bound(obj_rct, scr_rct):
 def main():
     scrn = Screen("進撃のこうかとん", (1600, 900), "ex06/data/bg.jpg")
     player = Prayer("ex06/data/sentou.png", 0.3, (800, 830))
+<<<<<<< HEAD
     enemy = Enemy("ex06/data/6.png", 1.5, (100, 70), (5 , 1))
+=======
+    enemy = Enemy("pra05/fig/6.png", 1.5, (100, 70), (5 , 1))
+>>>>>>> c871df2f8417ef132cc82d8312cb2fa53b4fa935
     score = Score()
     
     enemy_grp_dct = {} #enemyのグループの辞書を作成
@@ -165,7 +169,11 @@ def main():
                 # 1.5秒経ったときenemyを生成する。
                 enemyx = randint(100, 1500)
                 spdx = randint(-5, 5)
+<<<<<<< HEAD
                 enemy = Enemy("ex06/data/6.png", 1.5, (enemyx, 70), (spdx, 1))
+=======
+                enemy = Enemy("pra05/fig/6.png", 1.5, (enemyx, 70), (spdx, 1))
+>>>>>>> c871df2f8417ef132cc82d8312cb2fa53b4fa935
                 group.add(enemy)
                 enemy_grp1.add(enemy)
             if event.type == 31:
