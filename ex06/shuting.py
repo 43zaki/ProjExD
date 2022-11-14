@@ -142,8 +142,147 @@ def check_bound(obj_rct, scr_rct):
     if obj_rct.top < scr_rct.top or scr_rct.bottom < obj_rct.bottom: 
         tate = -1
     return yoko, tate
+
+
+class Deta: #ハイスコア用Txtの変更　布施
+    def __init__(self):
+        self.highscore = 0
+    
+    def Load(self,filepass):
+        with open(filepass ,'r',encoding="utf8") as f:
+            try:
+                self.highscore=int(f.read())#データがあればそれをハイスコアとする
+            except:
+                self.highscore=0            #無ければハイスコアを0とする
+    
+    def update(self,filepass,hiscore):      #hightscoreの更新
+        with open(filepass ,'w',encoding="utf8") as f:
+            f.write(str(hiscore))
+    
+    def reset(self,filepass):              #hightscoreのリセット
+        with open(filepass ,'w',encoding="utf8") as f:
+            f.write("")
+
+
+class Screen_st:       #動かないスクリーン用　布施
+    def __init__(self,title,wh,bgfile):
+        pg.display.set_caption(title)  
+        self.scrn_sfc=pg.display.set_mode(wh)       #スクリーン用sfc
+        self.scrn_rect=self.scrn_sfc.get_rect()     #スクリーン用Rect
+        self.bg_sfc =pg.image.load(bgfile)     #背景Sfc
+        self.bg_rect=self.bg_sfc.get_rect()         #背景Rect 
+    
+    def blit(self):
+        self.scrn_sfc.blit(self.bg_sfc,self.bg_rect)
+        return self.scrn_sfc
+
+# png=["fig/0.png","fig/1.png","fig/2.png"]
+# toriping=0
+
+class Bird:           #画像読み込み、表示　布施
+    def __init__(self,filename,bairitu,syokiiti):
+        self.gazou_sfc=pg.image.load(filename)
+        self.gazou_sfc= pg.transform.rotozoom(self.gazou_sfc, 0, bairitu)
+        self.gazou_rect=self.gazou_sfc.get_rect()
+        self.gazou_rect.center=(syokiiti)
+    
+    def blit(self,sc):
+        sc.blit(self.gazou_sfc,self.gazou_rect)
+
+
+class Font:            #文字表示用　布施
+    def __init__(self,size,Non=None):
+        self.word=pg.font.Font(Non,size)
+        
+    def brit(self,sc,syokiiti,word,colour):
+        self.word_sfc=self.word.render(f"{word}",True,colour)
+        sc.blit(self.word_sfc,syokiiti)
+
+        
+
+def main2 ():               #スタート画面　布施
+    global mod 
+    score=Deta()
+    score.Load("ex06\data\Highscore.txt")
+    pg.init()
+    scrn_sfc=Screen_st("進撃のこうかとん",(1600,900),"ex06/data/bg.jpg")
+    bird=Bird("ex06/data/6.png",3.0,(800,450))  
+    font=Font(80)
+    font1=Font(100)
+    font2=Font(150,"SoukouMincho.ttf")
+    keikoku=Bird("ex06/data/keikoku.jpg",1.0,(800,450)) 
+    ans=0
+
+
+    while True:
+        nsc=scrn_sfc.blit()
+        bird.blit(nsc)
+        font.brit(nsc,[10,10],f"Highscore: {score.highscore}",(255,255,255))
+        font1.brit(nsc,[500,600],f"[S] : Start",(255,255,255))
+        font1.brit(nsc,[500,700],f"[C] : Clear high score",(255,255,255))
+        font2.brit(nsc,[200,150],"進撃のこうかとん",(255,255,255))
+        
+        
+        if ans==1:
+            keikoku.blit(nsc)
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+                
+        pressed = pg.key.get_pressed()
+        if pressed[pg.K_s]:
+            mod=1
+            return
+        if pressed[pg.K_c]:
+            ans=1
+        
+        if ans==1 and pressed[pg.K_y]:
+            score.reset("ex06\data\Highscore.txt")
+            ans=0
+            return
+        
+        if ans==1 and pressed[pg.K_n]:
+            ans=0
+        pg.display.update()
+
+def main3 ():              #GameOver画面　布施
+    global mod,sco
+    score=Deta()
+    score.Load("ex06\data\Highscore.txt")
+    pg.init()
+    scrn_sfc=pg.display.set_mode((1600,900))
+    pg.display.set_caption("Game Over")
+    font=Font(200)
+    font1=Font(100)
+    
+    while True:
+        font.brit(scrn_sfc,[400,200],f"Game Over",(255,255,255))
+        if score.highscore< sco:
+            score.update("ex06\data\Highscore.txt",sco)
+            font1.brit(scrn_sfc,[500,450],f"HighScore: {sco}",(255,0,0))
+        
+        else:
+            font1.brit(scrn_sfc,[600,450],f"Score: {sco}",(255,255,255))
+        font1.brit(scrn_sfc,[500,650],f"[R] : Rstert",(255,255,255))
+        pg.display.update()
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+        pressed = pg.key.get_pressed()
+        if pressed[pg.K_r]:
+            mod=0
+            return
+        if pressed[pg.K_e]:
+            pg.quit()
+            sys.exit()
+
            
 def main():
+    global mod ,sco
+    sco=0
     start = 0 # 無敵時間のスタートの初期値
     item_time = 0 # 無敵時間の初期値 エラーを起こさないため
     balet = 50 # playerが撃てる球の数
@@ -210,16 +349,19 @@ def main():
                 player_grp.remove(thunder)
             elif pg.sprite.spritecollide(player, enemy_grp , dokill=False): 
                 # playerとenemyが衝突したら終了
+                mod=2 #モード変更
                 return
             if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=going, dokillb=True):
                 # playerの球と敵が衝突したときにスコアを更新する
                 score.update(add_score=add_score) 
+                sco=score.score
                 
                 
         
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                return
+                pg.quit() # 初期化の解除
+                sys.exit()
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 before = pg.time.get_ticks()
             if event.type == pg.KEYUP and event.key == pg.K_SPACE and balet > 0:
@@ -266,7 +408,15 @@ def main():
         clock.tick(200)
         
 if __name__ == "__main__":
+    mod=0
+    sco=0
     pg.init() # 初期化
-    main()    # ゲームの本体
+    while True:
+        if mod==0:  #スタート画面
+            main2()
+        if mod==1:  #ゲーム画面
+            main()   # ゲームの本体
+        if mod==2:  #GameOver画面
+            main3()
     pg.quit() # 初期化の解除
     sys.exit()
