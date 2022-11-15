@@ -185,7 +185,7 @@ def main():
     enemy_grp_dct[enemy_grp3] = 1000 # ボス
     
     pg.time.set_timer(30, 1500) # 1.5秒ごとに敵が生成される
-    pg.time.set_timer(31, 3000) # 1.0秒ごとに敵の弾丸が生成される
+    pg.time.set_timer(31, 3000) # 3.0秒ごとに敵の弾丸が生成される
     pg.time.set_timer(32, 10000) # 10秒ごとに雷のアイテムが生成される
     pg.time.set_timer(33, 7000) # 5.0秒ごとに弾丸のアイテムが生成される
     pg.time.set_timer(34, 15000) # 15秒ごとにボスが生成される
@@ -267,7 +267,7 @@ def main():
                 group.add(enemy)
                 enemy_grp1.add(enemy)
             if event.type == 31:
-                # 1.0秒経ったときenemyから弾丸を生成する。
+                # 3.0秒経ったときenemyから弾丸を生成する。
                 x = enemy.rect.centerx
                 y = enemy.rect.centery
                 shot = Shot((0, 255, 0), 10, (0, 4), (x, y))
@@ -288,7 +288,7 @@ def main():
                 group.add(item)
                 bullet_item_grp.add(item)
             if event.type == 34:
-                # 20.0秒ごとにboss_enemyを生成する。
+                # 15.0秒ごとにboss_enemyを生成する。
                 enemyx = randint(100, 1500)
                 boss_enemy = Enemy("ex06/data/6.png", 0.5, (enemyx, 70), (10, 0))
                 group.add(boss_enemy)
