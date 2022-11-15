@@ -1,32 +1,32 @@
 import random
 import time
 
-def shutudai(quiz_dic): #問題を選択して表示する関数
+def shutudai(quiz_dic):
     quiz = random.choice(list(quiz_dic.keys()))
     print(f"問題:\n{quiz}")
     return quiz
     
-def kaito(quiz, quiz_dic): #回答結果の正負を判別する関数
+def kaito(quiz, quiz_dic):
     time_start = time.time() #解答時間計測開始
     ans = input("答え:")
     time_end = time.time() #解答時間計測終了
     if ans in quiz_dic[quiz]:
         t = time_end - time_start
-        if t <= 10: #解答時間が10秒以内であるとき
-            print("正解です。とても速い.まるで光だ")
-        elif 10 < t <= 20: #10~20秒以内
+        if t <= 10:
+            print("正解です。すごく速い.俺でなきゃ見逃しちゃうね")
+        elif 10 < t <= 20:
             print("正解だ。だがお前はまだまだ早くなれる")
-        elif 20 < t <= 30: #20~30秒以内
-            print("正解。だが全然遅いなまるでカタツムリだ")
-        else: #30秒以上
-            print("せいかい...すごく遅いぞ。調べて答えるんじゃないか")
+        elif 20 < t <= 30:
+            print("正解。しかし全然遅いな。まるでカタツムリだ")
+        else:
+            print("せいかい...遅いぞ。調べて答えるんじゃないのか。")
             
     else:
-        print("不正解")
+        print("不正解。まだまだだね")
 
 if __name__ == "__main__":
-    quiz_dic = {"ドラえもんに登場するスネ夫の苗字は？":["骨川", "ほねかわ", "ホネカワ"],
-                "ドラえもんの好物はどら焼き、では妹のドラミちゃんの好物は？":["めろんぱん", "メロンパン", "メロンぱん", "めろんパン"],
-                "ドラえもんが苦手とする動物はなに？":["鼠", "ネズミ", "ねずみ"]} #問題の選択肢と答え
-    quiz = shutudai(quiz_dic) #クイズの取得
+    quiz_dic = {"あああ":["iii", "uuu", "eee", "ooo"],
+                "かかか":["qqq", "www", "rrr", "ttt"],
+                "さささ":["yyy", "ppp", "sss", "ddd"]}
+    quiz = shutudai(quiz_dic)
     kaito(quiz, quiz_dic)

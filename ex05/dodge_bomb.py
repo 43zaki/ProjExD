@@ -200,7 +200,7 @@ def main():
 
 
 if __name__ == "__main__":
-    pg.init() # 初期化
+    pg.init() # 初期化 
     main()    # ゲームの本体
     pg.quit() # 初期化の解除
     sys.exit()
