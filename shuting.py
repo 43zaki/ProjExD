@@ -458,6 +458,6 @@ if __name__ == "__main__":
         if mod==1:  #ゲーム画面
             main()   # ゲームの本体
         if mod==2:  #GameOver画面
-            main3()
+            main3()#
     pg.quit() # 初期化の解除
     sys.exit()
