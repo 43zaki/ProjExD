@@ -1,6 +1,6 @@
 import pygame as pg
 import sys
-from random import randint, choice
+from random import randint
 
 class Screen: # スクリーンと背景を生成するクラス　　 
     def __init__(self, title, wh_pos:tuple, file_path):
@@ -29,10 +29,10 @@ class Screen: # スクリーンと背景を生成するクラス　　
             
 class Prayer(pg.sprite.Sprite): # prayerが動かす挙動を設定するクラス
     key_delta = {
-        pg.K_UP:    [0, -2],
-        pg.K_DOWN:  [0, +2],
-        pg.K_LEFT:  [-2, 0],
-        pg.K_RIGHT: [+2, 0],
+        pg.K_UP:    [0, -3],
+        pg.K_DOWN:  [0, +3],
+        pg.K_LEFT:  [-3, 0],
+        pg.K_RIGHT: [+3, 0],
         }
     
     def __init__(self, file_path1, size, first_pos:tuple):
@@ -87,7 +87,7 @@ class Enemy(pg.sprite.Sprite): # enemyに関するクラス
         self.rect.move_ip(self.vx, self.vy)
         
 
-class Item(pg.sprite.Sprite): # 山崎
+class Item(pg.sprite.Sprite): # アイテムを生成するクラス　山崎
     def __init__(self, file_path1, size, first_pos:tuple, speed:tuple):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.image.load(file_path1)
@@ -101,7 +101,7 @@ class Item(pg.sprite.Sprite): # 山崎
         self.rect.move_ip(self.vx, self.vy)
         
         
-class Thunder(pg.sprite.Sprite): # 山崎
+class Thunder(pg.sprite.Sprite): # 雷（無敵状態）を生成するクラス　山崎
     def __init__(self, file_path1, size, first_pos:tuple):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.image.load(file_path1)
@@ -113,7 +113,7 @@ class Thunder(pg.sprite.Sprite): # 山崎
         self.rect.move_ip(vx, vy)
         
 
-class BulletCount(pg.sprite.Sprite):
+class BulletCount(pg.sprite.Sprite): # 弾丸の弾数を表示するクラス　山崎
     def __init__(self, bullet=100):
         pg.sprite.Sprite.__init__(self)
         self.font = pg.font.Font(None, 40)
@@ -129,7 +129,7 @@ class BulletCount(pg.sprite.Sprite):
         self.image = self.font.render(msg, 0, self.color) 
         
         
-class Score(pg.sprite.Sprite): # 山崎
+class Score(pg.sprite.Sprite): # スコアの表示を生成するクラス　山崎
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         self.font = pg.font.Font(None, 50)
@@ -160,7 +160,7 @@ def check_bound(obj_rct, scr_rct):
 def main():
     start = 0 # 無敵時間のスタートの初期値
     item_time = 0 # 無敵時間の初期値 エラーを起こさないため
-    bullet = 10 # playerが撃てる弾数
+    bullet = 50 # playerが撃てる弾数
     
     scrn = Screen("進撃のこうかとん", (1600, 900), "ex06/data/bg.jpg")
     player = Prayer("ex06/data/sentou.png", 0.3, (800, 830))
@@ -173,7 +173,7 @@ def main():
     
     player_grp = pg.sprite.Group(player) # playerに関するグループを作成する
     enemy_grp1 = pg.sprite.Group(enemy) # enemyに関するグループを作成する
-    enemy_grp2 = pg.sprite.Group() # enemyの球に関するグループを作成する
+    enemy_grp2 = pg.sprite.Group() # enemyの弾丸に関するグループを作成する
     enemy_grp3 = pg.sprite.Group() # boss_enemyに関するグループを作成する
     thunder_item_grp = pg.sprite.Group() # thunder_itemに関するグループを作成する
     bullet_item_grp = pg.sprite.Group() # bulletr_itemに関するグループを作成する
@@ -181,11 +181,11 @@ def main():
     
     # enemyのグループに対するスコア
     enemy_grp_dct[enemy_grp1] = 300 # 通常の敵
-    enemy_grp_dct[enemy_grp2] = 100 # 敵の球
-    enemy_grp_dct[enemy_grp3] = 1000 #ボス
+    enemy_grp_dct[enemy_grp2] = 100 # 敵の弾丸
+    enemy_grp_dct[enemy_grp3] = 1000 # ボス
     
     pg.time.set_timer(30, 1500) # 1.5秒ごとに敵が生成される
-    pg.time.set_timer(31, 1000) # 1.0秒ごとに敵の球が生成される
+    pg.time.set_timer(31, 3000) # 1.0秒ごとに敵の弾丸が生成される
     pg.time.set_timer(32, 10000) # 10秒ごとに雷のアイテムが生成される
     pg.time.set_timer(33, 7000) # 5.0秒ごとに弾丸のアイテムが生成される
     pg.time.set_timer(34, 15000) # 15秒ごとにボスが生成される
@@ -235,7 +235,7 @@ def main():
                 # playerとenemyが衝突したら終了
                 return
             if pg.sprite.groupcollide(player_grp, enemy_grp, dokilla=going, dokillb=True):
-                # playerの球と敵が衝突したときにスコアを更新する
+                # playerの弾丸と敵が衝突したときにスコアを更新する
                 score.update(add_score=add_score) 
                 
                 
@@ -246,10 +246,10 @@ def main():
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 before = pg.time.get_ticks()
             if event.type == pg.KEYUP and event.key == pg.K_SPACE and bullet > 0:
-                # スペースが押されてplayerの弾数が残っているときこうかとんから球が発射される
+                # スペースが押されてplayerの弾数が残っているときこうかとんから弾丸が発射される
                 after = pg.time.get_ticks()
-                charge = 10 + (after - before)//40 # 球の大きさを決める
-                if charge > 100: # 球の半径が100よりも大きかったら100にし貫通するようになる
+                charge = 10 + (after - before)//40 # 弾丸の大きさを決める
+                if charge > 100: # 弾丸の半径が100よりも大きかったら100に固定する
                     charge = 100
                 x = player.rect.centerx
                 y = player.rect.centery
@@ -267,20 +267,21 @@ def main():
                 group.add(enemy)
                 enemy_grp1.add(enemy)
             if event.type == 31:
-                # 1.0秒経ったときenemyから球を生成する。
+                # 1.0秒経ったときenemyから弾丸を生成する。
                 x = enemy.rect.centerx
                 y = enemy.rect.centery
-                shot = Shot((0, 255, 0), 10, (0, 3), (x, y))
+                shot = Shot((0, 255, 0), 10, (0, 4), (x, y))
                 group.add(shot)
                 enemy_grp2.add(shot)
             if event.type == 32:
-                # 10.0秒経ったときitemを生成する
+                # 10.0秒経ったとき雷アイテムを生成する
                 x = randint(10, 1590)
                 y = 10
                 item = Item("ex06/data/thunder01.png", 0.1, (x, y), (0, 1))
                 group.add(item)
                 thunder_item_grp.add(item)
             if event.type == 33:
+                # 7.0秒経ったとき弾丸アイテムを生成する
                 x = randint(10, 1590)
                 y = 10
                 item = Item("ex06/data/bullet.png", 0.2, (x, y), (0, 1))
