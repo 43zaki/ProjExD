@@ -1,6 +1,7 @@
 import pygame as pg
 import sys
 from random import randint, choice
+import time
 
 class Screen: #スクリーンと背景を生成するクラス　　 
     def __init__(self, title, wh_pos:tuple, file_path):
@@ -102,9 +103,13 @@ def check_bound(obj_rct, scr_rct):
 
         
 def main():
-    scrn = Screen("進撃のこうかとん", (1600, 900), "ex06/data/bg.jpg")
-    player = Prayer("ex06/data/sentou.png", 0.3, (800, 830))
-    enemy = Enemy("pra05/fig/6.png", 1.5, (100, 70), (5 , 1))
+    scrn = Screen("進撃のこうかとん", (1600, 900), "fig/bg.jpg")
+    player = Prayer("fig/sentou.png", 0.3, (800, 830))
+    enemy = Enemy("fig/teki.png", 1.5, (100, 70), (5 , 1))
+
+    pg.mixer.init(frequency = 44100)    # 初期設定 watabe
+    pg.mixer.music.load("fig/test.mp3")     # 音楽ファイルの読み込み
+    pg.mixer.music.play()              # 音楽の再生回数()
     
     player_grp = pg.sprite.Group(player) #playerに関するグループを作成する
     enemy_grp = pg.sprite.Group(enemy) #enemyに関するグループを作成する
@@ -139,7 +144,7 @@ def main():
             if event.type == 30:
                 # 1.5秒経ったときenemyを生成する。
                 enemyx = randint(100, 1500)
-                enemy = Enemy("pra05/fig/6.png", 1.5, (enemyx, 70), (5 , 1))
+                enemy = Enemy("fig/teki.png", 1.5, (enemyx, 70), (5 , 1))  
                 group.add(enemy)
                 enemy_grp.add(enemy)
             if event.type == 31:
