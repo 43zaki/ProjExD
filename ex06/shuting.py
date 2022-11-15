@@ -1,6 +1,5 @@
 import sys
 from random import randint
-
 import pygame as pg
 
 
@@ -146,18 +145,6 @@ class Score(pg.sprite.Sprite): # スコアの表示を生成するクラス　�
         msg = "Score: %d" % self.score
         self.image = self.font.render(msg, 0, self.color) 
         
-def check_bound(obj_rct, scr_rct):
-    """
-    obj_rct：こうかとんrct，または，爆弾rct
-    scr_rct：スクリーンrct
-    領域内：+1／領域外：-1
-    """
-    yoko, tate = +1, +1
-    if obj_rct.left < scr_rct.left or scr_rct.right < obj_rct.right: 
-        yoko = -1
-    if obj_rct.top < scr_rct.top or scr_rct.bottom < obj_rct.bottom: 
-        tate = -1
-    return yoko, tate
 
 class Deta: #ハイスコア用Txtの変更　布施
     def __init__(self):
@@ -190,10 +177,8 @@ class Screen_st:       #動かないスクリーン用　布施
     def blit(self):
         self.scrn_sfc.blit(self.bg_sfc,self.bg_rect)    #スクリーンの描画
         return self.scrn_sfc
-
-# png=["fig/0.png","fig/1.png","fig/2.png"]
-# toriping=0
-
+    
+    
 class Bird:           #画像読み込み、表示　布施
     def __init__(self,filename,bairitu,syokiiti):
         self.gazou_sfc=pg.image.load(filename)     #画像用のSfcの作成
@@ -213,9 +198,19 @@ class Font:            #文字表示用　布施
         self.word_sfc=self.word.render(f"{word}",True,colour)   #テキストの設定
         sc.blit(self.word_sfc,syokiiti) #背景sfcに描画
 
-        
-
-           
+def check_bound(obj_rct, scr_rct):
+    """
+    obj_rct：こうかとんrct，または，爆弾rct
+    scr_rct：スクリーンrct
+    領域内：+1／領域外：-1
+    """
+    yoko, tate = +1, +1
+    if obj_rct.left < scr_rct.left or scr_rct.right < obj_rct.right: 
+        yoko = -1
+    if obj_rct.top < scr_rct.top or scr_rct.bottom < obj_rct.bottom: 
+        tate = -1
+    return yoko, tate        
+         
 def main():
     global mod ,sco
     sco=0  #今回の得点用
@@ -306,8 +301,6 @@ def main():
                 score.update(add_score=add_score) 
                 sco=score.score
                 
-                
-        
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
@@ -378,7 +371,6 @@ def main2 ():               #スタート画面　布施
     keikoku=Bird("ex06/data/keikoku.jpg",1.0,(800,450)) 
     ans=0
 
-
     while True:
         nsc=scrn_sfc.blit()
         bird.blit(nsc)
@@ -386,8 +378,7 @@ def main2 ():               #スタート画面　布施
         font1.brit(nsc,[500,600],f"[S] : Start",(255,255,255))
         font1.brit(nsc,[500,700],f"[C] : Clear high score",(255,255,255))
         font2.brit(nsc,[200,150],"進撃のこうかとん",(255,255,255))
-        
-        
+           
         if ans==1:
             keikoku.blit(nsc)       #ans=1の時警告画面が出るようにする
         for event in pg.event.get():
@@ -430,7 +421,7 @@ def main3 ():              #GameOver画面　布施
             font1.brit(scrn_sfc,[600,450],f"Score: {sco}",(255,255,255)) #スコアと白で表示
         
         font.brit(scrn_sfc,[400,200],f"Game Over",(255,255,255))    #テキストの表示
-        font1.brit(scrn_sfc,[500,650],f"[R] : Rstert",(255,255,255))     
+        font1.brit(scrn_sfc,[500,650],f"[R] : Restart",(255,255,255))     
         font1.brit(scrn_sfc,[500,750],f"[E] : Exit",(255,255,255))    
         
         pg.display.update()
